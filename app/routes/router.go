@@ -1,24 +1,23 @@
 package routes
 
 import (
-	"encoding/json"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Response struct {
 	Message string `json:"message"`
 }
 
-func NewRouter() *http.ServeMux {
-	router := http.NewServeMux()
-	router.HandleFunc("GET /ping", pingHandler)
+func NewRouter() *gin.Engine {
+	router := gin.Default()
+	router.GET("/ping", handlePong)
 	return router
 }
 
-func pingHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	response := Response{
-		Message: "pong",
-	}
-	json.NewEncoder(w).Encode(response)
+func handlePong(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "pong",
+	})
 }
