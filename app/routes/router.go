@@ -12,11 +12,10 @@ type Response struct {
 
 func NewRouter() *gin.Engine {
 	router := gin.Default()
-	router.GET("/ping", handlePong)
 	return router
 }
 
-func handlePong(c *gin.Context) {
+func HandlePing(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "pong",
 	})

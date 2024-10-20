@@ -2,6 +2,7 @@ package models
 
 import "github.com/google/uuid"
 
+// Structure for  registering and storing users
 type User struct {
 	ID       uuid.UUID `gorm:"primary key"`
 	Name     string    `gorm:"size:255;not null;unique"`
@@ -9,15 +10,16 @@ type User struct {
 	Role     string    `gorm:"size:255;not null"`
 }
 
+// Structure for doctor information connected to the User table via UserID field
 type Doctor struct {
-	ID         uuid.UUID `gorm:"primary key"`
-	UserID     uuid.UUID `gorm:"not null"`
-	Name       string    `gorm:"not null"`
-	Speciality string
-	Patients   []Patient
-	User       User `gorm:"foreignKey:UserID"`
+	ID       uuid.UUID `gorm:"primary key"`
+	UserID   uuid.UUID `gorm:"not null"`
+	Name     string    `gorm:"not null"`
+	Patients []Patient
+	User     User `gorm:"foreignKey:UserID"`
 }
 
+// Structure for patient information connected to the Doctor table via DoctorID field.
 type Patient struct {
 	ID       uuid.UUID `gorm:"primary key"`
 	Name     string    `gorm:"primary key;size:255;not null;unique"`

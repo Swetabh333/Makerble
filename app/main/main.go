@@ -12,8 +12,9 @@ import (
 
 func main() {
 	//Load the env file
-	godotenv.Load(".env")
-
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
 	//Connect to the database and return db instance
 	db, err := databases.ConnectToDatabase()
 	if err != nil {
@@ -33,8 +34,14 @@ func main() {
 	router := routes.NewRouter()
 
 	//routes
-	router.GET("/ping", routes.HandlePong)
+
+	//ping to check if server is alive
+	router.GET("/ping", routes.HandlePing)
+	//for registering a new user
+	router.POST("/auth/register", routes.RegisterHandler(db))
 
 	//Start out http server at port 8080
-	router.Run("0.0.0.0:8080")
+	if err := router.Run("0.0.0.0:8080"); err != nil {
+		log.Fatal("Error starting server: ", err)
+	}
 }
