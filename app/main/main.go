@@ -37,8 +37,13 @@ func main() {
 
 	//ping to check if server is alive
 	router.GET("/ping", routes.HandlePing)
+
+	//Auth routes
+
 	//for registering a new user
 	router.POST("/auth/register", routes.RegisterHandler(db))
+	//for logging in
+	router.POST("/auth/login", routes.LoginHandler(db))
 
 	//Start out http server at port 8080
 	if err := router.Run("0.0.0.0:8080"); err != nil {

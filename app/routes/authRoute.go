@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Swetabh333/Makerble/app/helper"
 	"github.com/Swetabh333/Makerble/app/models"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -79,6 +80,7 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 
 			return
 		}
+		//encrypting password before storing
 		hashedPassword, err := HashPassword(regBody.Password)
 		if err != nil {
 			fmt.Println("Error hashing password")
@@ -136,7 +138,54 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 
 func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//login := login{}
-		//user := models.User{}
+		login := login{}
+		user := models.User{}
+		err := c.BindJSON(&login)
+		if err != nil {
+			fmt.Println("Error binding request body")
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Some internal error occured",
+			})
+			return
+		}
+
+		err = db.Where("name = ?", login.Name).Find(&user).Error
+		if err != nil {
+			fmt.Println("User not found")
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Username does not exist",
+			})
+			return
+		}
+		check := CheckPasswordHash(login.Password, user.Password)
+		if !check {
+			fmt.Println("Incorrect password")
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "username and password do not match",
+			})
+			return
+
+		}
+		token, err := helper.GenerateToken(user.Name, user.ID.String(), user.Role)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Error generating cookies",
+			})
+		}
+		refreshToken, err := helper.GenerateRefreshToken(user.Name, user.ID.String(), user.Role)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Error generating cookies",
+			})
+		}
+		c.SetCookie("token", token, 24*3600, "/", "", false, true)
+		c.SetCookie("refreshToken", refreshToken, 30*24*3600, "/", "", false, true)
+		fmt.Println("Logged in")
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Logged in successfully",
+		})
+		return
+
 	}
 }
