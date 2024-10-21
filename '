@@ -15,33 +15,13 @@ import (
 // defing register json payload
 type register struct {
 	Name     string `json:"username"`
-	Password string `json:"password" validate:"required,min=8,max=64,password"`
+	Password string `json:"password" validate:"required,min=8,max=64"`
 	Role     string `json:"role"`
 }
 
 type login struct {
 	Name     string `json:"username"`
 	Password string `json:"password"`
-}
-
-// function to validate if password is valid or not - password should have an uppercase letter ,  a lowercase letter , a number and be at least 8 characters
-func passwordValidation(f1 validator.FieldLevel) bool {
-	password := f1.Field().String()
-	hasMinLen := len(password) >= 8
-	hasUpper := false
-	hasLower := false
-	hasNumber := false
-	for _, char := range password {
-		switch {
-		case 'A' <= char && char <= 'Z':
-			hasUpper = true
-		case 'a' <= char && char <= 'z':
-			hasLower = true
-		case '0' <= char && char <= '9':
-			hasNumber = true
-		}
-	}
-	return hasMinLen && hasUpper && hasLower && hasNumber
 }
 
 // function to encrypt the password before storing in database
@@ -62,7 +42,6 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 		// extracting the body of request
 		regBody := register{}
 		validate := validator.New()
-		validate.RegisterValidation("password", passwordValidation)
 		err := c.BindJSON(&regBody)
 		if err != nil {
 			fmt.Println("Error binding request body")
@@ -74,10 +53,8 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 		//password length validation
 		if err = validate.Struct(&regBody); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "password should be at least 8 characters and contain at least 1 number, 1 uppercase character and 1 lower case character",
+				"error": err.Error(),
 			})
-
-			return
 		}
 		hashedPassword, err := HashPassword(regBody.Password)
 		if err != nil {
