@@ -13,9 +13,14 @@ import (
 
 // defing register json payload
 type register struct {
-	Name     string `json:"name"`
+	Name     string `json:"username"`
 	Password string `json:"password"`
 	Role     string `json:"role"`
+}
+
+type login struct {
+	Name     string `json:"username"`
+	Password string `json:"password"`
 }
 
 // function to encrypt the password before storing in database
@@ -34,7 +39,7 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		// extracting the body of request
-		var regBody register
+		regBody:= register{}
 		err := c.BindJSON(&regBody)
 		if err != nil {
 			fmt.Println("Error binding request body")
@@ -92,6 +97,7 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 
 func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
+		login := login{}
+		user := models.User{}
 	}
 }
