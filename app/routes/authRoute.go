@@ -39,7 +39,7 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		// extracting the body of request
-		regBody:= register{}
+		regBody := register{}
 		err := c.BindJSON(&regBody)
 		if err != nil {
 			fmt.Println("Error binding request body")
@@ -66,6 +66,13 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 
 		err = db.Create(&user).Error
 		if err != nil {
+			if err.Error() == `ERROR: duplicate key value violates unique constraint "uni_users_name" (SQLSTATE 23505)` {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": "User already exists",
+				})
+
+				return
+			}
 			fmt.Printf("Error storing user in database: %s\n", err)
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": "Some internal error occured",
@@ -80,7 +87,8 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 			}
 			err = db.Create(&doctor).Error
 			if err != nil {
-				fmt.Printf("Error storing user in database: %s\n", err)
+
+				fmt.Printf("Error storing user in database: %s\n", err.Error())
 				c.JSON(http.StatusInternalServerError, gin.H{
 					"error": "Some internal error occured",
 				})
@@ -97,7 +105,7 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 
 func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		login := login{}
-		user := models.User{}
+		//login := login{}
+		//user := models.User{}
 	}
 }
