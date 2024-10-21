@@ -35,3 +35,27 @@ func GenerateRefreshToken(username string, ID string, role string) (string, erro
 	}
 	return tokenString, nil
 }
+
+func ValidateToken(tokenString string) (*jwt.Token, error) {
+	secret := os.Getenv("JWT_SECRET")
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+
+}
+
+func ValidateRefreshToken(tokenString string) (*jwt.Token, error) {
+	secret := os.Getenv("JWT_REFRESH_SECRET")
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+
+}

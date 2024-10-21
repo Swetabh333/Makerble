@@ -16,7 +16,7 @@ type Doctor struct {
 	UserID   uuid.UUID `gorm:"not null"`
 	Name     string    `gorm:"not null"`
 	Patients []Patient
-	User     User `gorm:"foreignKey:UserID"`
+	User     User `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE;OnDelete:CASCADE"`
 }
 
 // Structure for patient information connected to the Doctor table via DoctorID field.
