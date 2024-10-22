@@ -6,6 +6,8 @@ This project is created as a part of selection process for Makerble. It implemen
 
 - Using JWT Auth and Refresh Tokens to ensure other paths are protected from use by unauthorized entitites.
 
+- Ensured stored passwords are hashed for added security.
+
 - Registering a new patient.(can only be used by receptionists).
 
 - Viewing and updating the data for registered patients (for both doctors and receptionists).

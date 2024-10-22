@@ -20,9 +20,9 @@ var redisClient *redis.Client
 //init function runs before man to set everything up for us
 
 func init() {
-
+	var err error
 	//Connect to the database and return db instance
-	db, err := databases.ConnectToDatabase()
+	db, err = databases.ConnectToDatabase()
 	if err != nil {
 		log.Fatal("Could not connect to the database")
 	}
