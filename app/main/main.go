@@ -9,6 +9,7 @@ import (
 	"github.com/Swetabh333/Makerble/app/models"
 	"github.com/Swetabh333/Makerble/app/routes"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
@@ -48,7 +49,7 @@ func init() {
 
 func main() {
 
-	//gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.ReleaseMode)
 
 	//Create a router for routing requests
 	router := routes.NewRouter()
