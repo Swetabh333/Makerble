@@ -27,7 +27,7 @@ type login struct {
 }
 
 // function to validate if password is valid or not - password should have an uppercase letter ,  a lowercase letter , a number and be at least 8 characters
-func passwordValidation(f1 validator.FieldLevel) bool {
+func PasswordValidation(f1 validator.FieldLevel) bool {
 	password := f1.Field().String()
 	hasMinLen := len(password) >= 8
 	hasUpper := false
@@ -61,7 +61,7 @@ func CheckPasswordHash(password, hash string) bool {
 // For validating roles
 var validRoles = []string{"doctor", "receptionist"}
 
-func roleValidation(fl validator.FieldLevel) bool {
+func RoleValidation(fl validator.FieldLevel) bool {
 	role := strings.ToLower(fl.Field().String())
 	for _, validRole := range validRoles {
 		if role == validRole {
@@ -77,8 +77,8 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 		// extracting the body of request
 		regBody := register{}
 		validate := validator.New()
-		validate.RegisterValidation("password", passwordValidation)
-		validate.RegisterValidation("role", roleValidation)
+		validate.RegisterValidation("password", PasswordValidation)
+		validate.RegisterValidation("role", RoleValidation)
 
 		err := c.BindJSON(&regBody)
 		if err != nil {
