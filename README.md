@@ -20,9 +20,9 @@ This project is created as a part of selection process for Makerble. It implemen
 
 ## Testing out the project
 
-The project is deployed at [makerble-90sx.onrender.com](makerble-90sx.onrender.com) . 
+The project is deployed at [makerble-90sx.onrender.com](makerble-90sx.onrender.com) .
 
-[Here]() is the api documentation.
+[Here](https://app.swaggerhub.com/apis-docs/SWETABHSHREYAM333/Makerble/1.0) is the api documentation.
 
 **Note** - Since the project uses the free tier of render it might spin down due to inactivity , so while using the deployed link the first response might take a while , please have patience and retry in a minute. Thank you for your understanding.
 
@@ -30,13 +30,14 @@ The project exposes the following endponts :
 
 ### Ping Route
 
-- **`/ping`** 
+- **`/ping`**
   - **Method:** GET
   - **Description:** Checks whether the server is alive.
 
 ### Authentication Routes
 
 - **`/auth/register`**
+
   - **Method:** POST
   - **Description:** Registers a new user (e.g., doctor, receptionist).
 
@@ -47,18 +48,22 @@ The project exposes the following endponts :
 ### Patient Routes
 
 - **`/patient`**
+
   - **Method:** POST
   - **Description:** Creates a new patient record. Accessible only by receptionists.
 
 - **`/patient/:id`**
+
   - **Method:** GET
   - **Description:** Retrieves the data of a specific patient by their ID. Accessible by both doctors and receptionists.
 
 - **`/patients`**
+
   - **Method:** GET
   - **Description:** Fetches the data of all patients. Accessible by both doctors and receptionists.
 
 - **`/patient/:id`**
+
   - **Method:** DELETE
   - **Description:** Deletes a specific patient by their ID. Accessible only by receptionists.
 
@@ -67,6 +72,7 @@ The project exposes the following endponts :
   - **Description:** Updates the records of a specific patient by their ID. Accessible by both doctors and receptionists.
 
 ### Notes
+
 - Patient Routes are only accessible via authenticated users.
 
 ## Setting up the project Locally
@@ -78,6 +84,7 @@ git clone https://github.com/Swetabh333/Makerble.git
 cd Makerble
 go mod tidy
 ```
+
 This will install all the required dependencies for the project.
 
 Next you have to set the environment for the project. your root directory you have to paste the following information:
@@ -86,10 +93,11 @@ Next you have to set the environment for the project. your root directory you ha
 export DSN_STRING="<your_postgres_connection_string>/<your_database_name>"
 export JWT_SECRET="<your_jwt_secret>"
 export JWT_REFRESH_SECRET="<your_jwt_refresh_secret>"
-export REDIS_URL="<your_redis_connection_url>:<port no.>" 
+export REDIS_URL="<your_redis_connection_url>:<port no.>"
 export REDIS_PASSWORD="<your_redis_password>"
 ```
-I have used it this way for deployment purpose as the godotenv library gives an error on not detecting an env file. 
+
+I have used it this way for deployment purpose as the godotenv library gives an error on not detecting an env file.
 
 If you want to use a .env file , create a .env file in the root directory
 
@@ -99,9 +107,10 @@ and put these there
 DSN_STRING="<your_postgres_connection_string>/<your_database_name>"
 JWT_SECRET="<your_jwt_secret>"
 JWT_REFRESH_SECRET="<your_jwt_refresh_secret>"
-REDIS_URL="<your_redis_connection_url>:<port no.>" 
+REDIS_URL="<your_redis_connection_url>:<port no.>"
 REDIS_PASSWORD="<your_redis_password>"
 ```
+
 put this piece of code in the very beginninig of init function after error declaration in app/main/main.go
 
 ```
@@ -113,6 +122,7 @@ if err = godotenv.Load(); err != nil {
 //Connect to the database and return db instance
 	db, err = databases.ConnectToDatabase()
 ```
+
 Do the above and then in your terminal run
 
 ```bash
@@ -136,7 +146,9 @@ This will create an executable in your bin folder, which you can run using
 **Your backend is now listening at port `8080`**.
 
 ## Setting up using docker
+
 You can use docker compose to set this up as well
+
 ```bash
 git clone https://github.com/Swetabh333/Makerble.git
 cd Makerble
@@ -149,3 +161,4 @@ docker compose up --build
 ```
 
 **Your backend is now listening at port `8080`**.
+
