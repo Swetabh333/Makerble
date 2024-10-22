@@ -12,8 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
-
-	"github.com/joho/godotenv"
 )
 
 var db *gorm.DB
@@ -22,12 +20,9 @@ var redisClient *redis.Client
 //init function runs before man to set everything up for us
 
 func init() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
+
 	//Connect to the database and return db instance
-	db, err = databases.ConnectToDatabase()
+	db, err := databases.ConnectToDatabase()
 	if err != nil {
 		log.Fatal("Could not connect to the database")
 	}
