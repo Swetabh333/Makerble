@@ -132,4 +132,20 @@ This will create an executable in your bin folder, which you can run using
 ```bash
 ./bin/exe
 ```
+
+**Your backend is now listening at port `8080`**.
+
+## Setting up using docker
+You can use docker compose to set this up as well
+```bash
+git clone https://github.com/Swetabh333/Makerble.git
+cd Makerble
+```
+
+then run the docker build command
+
+```bash
+docker compose up --build
+```
+
 **Your backend is now listening at port `8080`**.
