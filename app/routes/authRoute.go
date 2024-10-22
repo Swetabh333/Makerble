@@ -18,7 +18,7 @@ import (
 type register struct {
 	Name     string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required,min=8,max=64,password"`
-	Role     string `json:"role" validate:"required"`
+	Role     string `json:"role" validate:"required,role"`
 }
 
 type login struct {
@@ -91,7 +91,7 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 		//password length validation
 		if err = validate.Struct(&regBody); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "password should be at least 8 characters and contain at least 1 number, 1 uppercase character and 1 lower case character",
+				"error": "request must contain username,password,role,role must be either doctor or receptionist,password should be at least 8 characters and contain at least 1 number, 1 uppercase character and 1 lower case character",
 			})
 
 			return

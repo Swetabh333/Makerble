@@ -81,9 +81,9 @@ func main() {
 	// route for creating a new patient - can only be done by a recptionist
 	router.POST("/patient", middleware.VerifyAuthentication, routes.AddPatient(db))
 	//route for getting a patients-data - can be accessed by both doctors and receptionists
-	router.GET("/patient/:id", middleware.VerifyAuthentication, routes.GetPatient(db))
+	router.GET("/patient/:id", middleware.VerifyAuthentication, routes.GetPatient(db, redisClient))
 	//route to fetch all patients - accessible by both doctor and receptionist
-	router.GET("/patients", middleware.VerifyAuthentication, routes.GetAllPatients(db))
+	router.GET("/patients", middleware.VerifyAuthentication, routes.GetAllPatients(db, redisClient))
 	//route for deleting a patient using his id - accessibly by receptionist
 	router.DELETE("/patient/:id", middleware.VerifyAuthentication, routes.DeletePatient(db))
 	//route for updating a patients records - accessible by both doctors and receptionists
