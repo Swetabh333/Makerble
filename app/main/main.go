@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/Swetabh333/Makerble/app/databases"
@@ -10,9 +9,7 @@ import (
 	"github.com/Swetabh333/Makerble/app/models"
 	"github.com/Swetabh333/Makerble/app/routes"
 	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 
-	//"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
@@ -43,7 +40,7 @@ func main() {
 
 	config := cors.Config{
 		AllowAllOrigins:  true,
-		AllowMethods:     []string{"GET", "POST"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
@@ -61,17 +58,11 @@ func main() {
 	router.POST("/auth/register", routes.RegisterHandler(db))
 	//for logging in
 	router.POST("/auth/login", routes.LoginHandler(db))
-	router.GET("/test", middleware.VerifyAuthentication, func(c *gin.Context) {
-		id, exists := c.Get("ID")
-		if !exists {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "id not availabale",
-			})
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"message": id,
-		})
-	})
+
+	// Patient routes
+
+	router.POST("/patients/add", middleware.VerifyAuthentication, routes.AddPatient(db))
+
 	//Start out http server at port 8080
 	if err := router.Run("0.0.0.0:8080"); err != nil {
 		log.Fatal("Error starting server: ", err)

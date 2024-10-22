@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/Swetabh333/Makerble/app/helper"
 	"github.com/Swetabh333/Makerble/app/models"
@@ -15,14 +16,14 @@ import (
 
 // defing register json payload
 type register struct {
-	Name     string `json:"username"`
+	Name     string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required,min=8,max=64,password"`
-	Role     string `json:"role"`
+	Role     string `json:"role" validate:"required"`
 }
 
 type login struct {
-	Name     string `json:"username"`
-	Password string `json:"password"`
+	Name     string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 // function to validate if password is valid or not - password should have an uppercase letter ,  a lowercase letter , a number and be at least 8 characters
@@ -57,6 +58,19 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
+// For validating roles
+var validRoles = []string{"doctor", "receptionist"}
+
+func roleValidation(fl validator.FieldLevel) bool {
+	role := strings.ToLower(fl.Field().String())
+	for _, validRole := range validRoles {
+		if role == validRole {
+			return true
+		}
+	}
+	return false
+}
+
 func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
@@ -64,6 +78,8 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 		regBody := register{}
 		validate := validator.New()
 		validate.RegisterValidation("password", passwordValidation)
+		validate.RegisterValidation("role", roleValidation)
+
 		err := c.BindJSON(&regBody)
 		if err != nil {
 			fmt.Println("Error binding request body")
@@ -148,6 +164,11 @@ func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 			})
 			return
 		}
+		validate := validator.New()
+		if err = validate.Struct(&login); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
 
 		err = db.Where("name = ?", login.Name).Find(&user).Error
 		if err != nil {
