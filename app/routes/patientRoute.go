@@ -126,8 +126,33 @@ func GetPatient(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-//Route to delete a patient's data
+// Route for getting all patients
+func GetAllPatients(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role, ok := c.Get("Role")
+		if !ok || (role != "doctor" && role != "receptionist") {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized to access this route"})
+			return
+		}
 
+		patients := []models.Patient{}
+
+		err := db.Find(&patients).Error
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch patients"})
+			return
+		}
+
+		if len(patients) == 0 {
+			c.JSON(http.StatusOK, gin.H{"message": "No patients found"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"patients": patients})
+	}
+}
+
+// Route to delete a patient's data
 func DeletePatient(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		role, ok := c.Get("Role")

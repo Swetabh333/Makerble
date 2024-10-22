@@ -9,27 +9,44 @@ import (
 	"github.com/Swetabh333/Makerble/app/models"
 	"github.com/Swetabh333/Makerble/app/routes"
 	"github.com/gin-contrib/cors"
+	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
 
 	"github.com/joho/godotenv"
 )
 
-func main() {
-	//Load the env file
-	if err := godotenv.Load(".env"); err != nil {
+var db *gorm.DB
+var redisClient *redis.Client
+
+//init function runs before man to set everything up for us
+
+func init() {
+	err := godotenv.Load(".env")
+	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 	//Connect to the database and return db instance
-	db, err := databases.ConnectToDatabase()
+	db, err = databases.ConnectToDatabase()
 	if err != nil {
 		log.Fatal("Could not connect to the database")
 	}
 	log.Print("connected to the database")
+
+	//Connect to redis
+	redisClient, err = databases.ConnectToRedis()
+	if err != nil {
+		log.Fatal("Could not connect to redis ", err)
+	}
 
 	//Migrating data to postgres
 	err = db.AutoMigrate(&models.User{}, &models.Doctor{}, &models.Patient{})
 	if err != nil {
 		log.Fatal("Error migrating data to database")
 	}
+
+}
+
+func main() {
 
 	//gin.SetMode(gin.ReleaseMode)
 
@@ -62,13 +79,15 @@ func main() {
 	// Patient routes
 
 	// route for creating a new patient - can only be done by a recptionist
-	router.POST("/patients", middleware.VerifyAuthentication, routes.AddPatient(db))
+	router.POST("/patient", middleware.VerifyAuthentication, routes.AddPatient(db))
 	//route for getting a patients-data - can be accessed by both doctors and receptionists
-	router.GET("/patients/:id", middleware.VerifyAuthentication, routes.GetPatient(db))
+	router.GET("/patient/:id", middleware.VerifyAuthentication, routes.GetPatient(db))
+	//route to fetch all patients - accessible by both doctor and receptionist
+	router.GET("/patients", middleware.VerifyAuthentication, routes.GetAllPatients(db))
 	//route for deleting a patient using his id - accessibly by receptionist
-	router.DELETE("/patients/:id", middleware.VerifyAuthentication, routes.DeletePatient(db))
+	router.DELETE("/patient/:id", middleware.VerifyAuthentication, routes.DeletePatient(db))
 	//route for updating a patients records - accessible by both doctors and receptionists
-	router.PUT("/patients/:id", middleware.VerifyAuthentication, routes.UpdatePatient(db))
+	router.PUT("/patient/:id", middleware.VerifyAuthentication, routes.UpdatePatient(db))
 
 	//Start out http server at port 8080
 	if err := router.Run("0.0.0.0:8080"); err != nil {
