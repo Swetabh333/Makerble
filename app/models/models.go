@@ -21,10 +21,11 @@ type Doctor struct {
 
 // Structure for patient information connected to the Doctor table via DoctorID field.
 type Patient struct {
-	ID       uuid.UUID `gorm:"primary key"`
-	Name     string    `gorm:"primary key;size:255;not null"`
-	Age      int       `gorm:"not null"`
-	Gender   string
-	DoctorID uuid.UUID `gorm:"not null"`
-	Doctor   Doctor    `gorm:"foreignKey:DoctorID;constraint:OnUpdate:CASCADE;OnDelete:CASCADE"`
+	ID        uuid.UUID `gorm:"primary key"`
+	Name      string    `gorm:"primary key;size:255;not null"`
+	Age       int       `gorm:"not null"`
+	Gender    string
+	Diagnosis string
+	DoctorID  uuid.UUID `gorm:"not null"`
+	Doctor    Doctor    `gorm:"foreignKey:DoctorID;constraint:OnUpdate:CASCADE;OnDelete:CASCADE"`
 }

@@ -169,7 +169,8 @@ func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
-
+			return
+		}
 		err = db.Where("name = ?", login.Name).Find(&user).Error
 		if err != nil {
 			fmt.Println("User not found")
@@ -192,12 +193,14 @@ func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": "Error generating cookies",
 			})
+			return
 		}
 		refreshToken, err := helper.GenerateRefreshToken(user.Name, user.ID.String(), user.Role)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": "Error generating cookies",
 			})
+			return
 		}
 		c.SetCookie("token", token, 24*3600, "/", "", false, true)
 		c.SetCookie("refreshToken", refreshToken, 30*24*3600, "/", "", false, true)
@@ -206,7 +209,6 @@ func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Logged in successfully",
 		})
-		return
 
 	}
 }
