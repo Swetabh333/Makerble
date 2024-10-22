@@ -44,6 +44,7 @@ func init() {
 
 func main() {
 
+	log.Println("Router Starting")
 	gin.SetMode(gin.ReleaseMode)
 
 	//Create a router for routing requests
