@@ -80,15 +80,45 @@ go mod tidy
 ```
 This will install all the required dependencies for the project.
 
-Next you have to create a `.env` file in the top level of the project. Inside the env file you have to paste the following information:
+Next you have to set the environment for the project. your root directory you have to paste the following information:
+
+```bash
+export DSN_STRING="<your_postgres_connection_string>/<your_database_name>"
+export JWT_SECRET="<your_jwt_secret>"
+export JWT_REFRESH_SECRET="<your_jwt_refresh_secret>"
+export REDIS_URL="<your_redis_connection_url>:<port no.>" 
+export REDIS_PASSWORD="<your_redis_password>"
+```
+I have used it this way for deployment purpose as the godotenv library gives an error on not detecting an env file. 
+
+If you want to use a .env file , create a .env file in the root directory
+
+and put these there
 
 ```
-DSN_STRING=<your_postgres_connection_string>/<your_database_name>
-JWT_SECRET=<your_jwt_secret>
-JWT_REFRESH_SECRET=<your_jwt_refresh_secret>
-REDIS_URL=<your_redis_connection_url>:<port no.> 
-REDIS_PASSWORD=<your_redis_password>
+DSN_STRING="<your_postgres_connection_string>/<your_database_name>"
+JWT_SECRET="<your_jwt_secret>"
+JWT_REFRESH_SECRET="<your_jwt_refresh_secret>"
+REDIS_URL="<your_redis_connection_url>:<port no.>" 
+REDIS_PASSWORD="<your_redis_password>"
 ```
+put this piece of code in the very beginninig of init function after error declaration in app/main/main.go
+
+```
+var err error
+
+if err = godotenv.Load(); err != nil {
+        log.Fatalf("Error loading .env file")
+    }
+//Connect to the database and return db instance
+	db, err = databases.ConnectToDatabase()
+```
+Do the above and then in your terminal run
+
+```bash
+go get github.com/joho/godotenv
+```
+
 Now you'll have to build the project with the following command in the root directory
 
 ```bash
